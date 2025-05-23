@@ -36,8 +36,11 @@ app/
 
 └── requirements.txt     # Зависимости проекта
 
+frontend/
 
+├── src/app.py # Веб интерфейс
 
+└── requirements.txt # Зависимости фронтенда
 
 ## Основные компоненты
 
