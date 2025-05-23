@@ -1,0 +1,92 @@
+{
+    "document_type": "{'document_type': 'visa'}",
+    "structured_fields": {
+        "fields": {
+            "personal_info": {
+                "title": {
+                    "bbox_2d": [
+                        10,
+                        10,
+                        30,
+                        20
+                    ]
+                },
+                "date_of_birth": {
+                    "bbox_2d": [
+                        40,
+                        10,
+                        60,
+                        20
+                    ]
+                },
+                "bank_account_number": {
+                    "bbox_2d": [
+                        70,
+                        10,
+                        90,
+                        20
+                    ]
+                }
+            },
+            "abstract": {
+                "signature": {
+                    "bbox_2d": [
+                        100,
+                        10,
+                        120,
+                        20
+                    ]
+                }
+            }
+        },
+        "bounding_boxes": {
+            "personal_info": {
+                "bbox_2d": [
+                    10,
+                    10,
+                    90,
+                    20
+                ]
+            },
+            "abstract": {
+                "bbox_2d": [
+                    100,
+                    10,
+                    120,
+                    20
+                ]
+            }
+        }
+    },
+    "handwritten_text": {
+        "handwritten_text": [
+            {
+                "text": "John Doe",
+                "bbox": {
+                    "x_min": 10,
+                    "x_max": 30,
+                    "y_min": 10,
+                    "y_max": 20
+                },
+                "classification": "handwrite",
+                "linked_field": "Name"
+            },
+            {
+                "text": "01/01/2023",
+                "bbox": {
+                    "x_min": 40,
+                    "x_max": 60,
+                    "y_min": 10,
+                    "y_max": 20
+                },
+                "classification": "handwrite",
+                "linked_field": "date"
+            }
+        ]
+    },
+    "signature_seal": {
+        "signature_detected": false,
+        "seal_detected": false,
+        "details": []
+    }
+}
