@@ -107,11 +107,10 @@
 ## other
 ### статьи
 #### major
-- https://habr.com/ru/companies/sberbank/articles/716796/ - статья Сбера про полный пайплайн задачи. [1]
+- https://habr.com/ru/companies/sberbank/articles/716796/ - статья Сбера про рукописную детекцию задачи. [1]
   хаба статьи - https://github.com/ai-forever/ReadingPipeline
   Инсайты:
     - возможно генерировать синту через GAN (https://habr.com/ru/companies/sberbank/articles/589537/)
-    - датасет для HTR - тетрадки (https://huggingface.co/datasets/ai-forever/school_notebooks_RU)
 - https://habr.com/ru/articles/815727/ - построение аналогичного сервиса с использованием Яндекс OCR
 - https://habr.com/ru/companies/sberdevices/articles/763932/ - статья Сбера про коррекцию ошибок с помощью SLM [2]
 - https://habr.com/ru/companies/jetinfosystems/articles/660405/ - статья про сравнение EasyOCR, Pytesseract, PaddleOCR
@@ -119,8 +118,6 @@
   есть идеи по препроцессингу, к примеру про выравнивание по сегментации. В конечном итоге использовали scikit-image и descew
   есть классная деталь про то что EasyOCR делает в базе 4 детекции (0, 90, 180, 270 градусов поворота)[3]
 #### minor
-- https://habr.com/ru/articles/591255/ - небольшой отчёт по реализации HTR с использованием BeamSearch для коррекции ошибок
-  Есть докерфайл, который можно проверить
 - https://habr.com/ru/articles/533350/ - статья похожая на ту что выше
 - https://habr.com/ru/articles/895664/ - слабая статья про сравнение LLM для задачи, лишний раз подтвердил нужность именно Qwen vl(72b)
 - https://habr.com/ru/articles/720614/ - относительно новая сатья про построение детектора HTR (eng)
