@@ -59,36 +59,6 @@
     
     Туториал ноут - https://colab.research.google.com/github/open-mmlab/mmocr/blob/dev-1.x/demo/tutorial.ipynb
     
-- Multi-Type-TD-TSR 2021
-    Links
-    - github - https://github.com/Psarpei/Multi-Type-TD-TSR
-    - colab - https://colab.research.google.com/github/Psarpei/Multi_Type_TD_TSR/blob/main/Table_Recognition.ipynb#scrollTo=74mow_zjx9PM
-    
-    Протестировать не успели из за траблов с коллабом
-    необходимо понижать версию колаба из за зависимости на pytorch 1.7;
-    детекторы на основе detectron v2 (лучшая модель Mask R-CNN) - только один детектор имеет право на существование
-    
-- unilm 2021
-    Links
-    - github - https://github.com/microsoft/unilm
-    - paper - https://arxiv.org/abs/2203.02378
-    - huggingface - https://huggingface.co/spaces/microsoft/document-image-transformer
-    
-    Множество моделей для всего что связно с языком.
-    Из полезного и не зависящего от языка - https://github.com/microsoft/unilm/tree/master/dit - трансформер для документов
-    Mask R-CNN (итс окей) и Cascade R-CNN (чуть лучше), в теории все гуд (см papers_with_code https://paperswithcode.com/sota/table-detection-on-ctdar)
-    
-    Коллаб с классификацией документа (на основе https://huggingface.co/microsoft/dit-base-finetuned-rvlcdip) - https://colab.research.google.com/github/eugenesiow/practical-ml/blob/master/notebooks/Document_Image_Classification_DiT.ipynb
-    Есть так же демки с Layout analys, но только демки. по качеству +/- так же как на TATR
-    
-- surya (GPL-3.0)
-    Links
-    - github - https://github.com/VikParuchuri/surya
-    
-    Если верить бенчмаркам, то это хроший детектор и распознаватель для всего анализа документа. Нужно тестить
-    Использует тот же CRAFT что и в EasyOCR. Они должны быть +/- одинаковые по бенчам, в хабе сравнивали с google vision и Tesseract
-    На весах лицензия cc-by-nc-sa-4.0
-    
 ### HTR 
 Здесь собраны проекты, реализованные детекторы конкретно для HTR
 - https://github.com/NastyBoget/hrtr - уже выполненый проект, нет весов
