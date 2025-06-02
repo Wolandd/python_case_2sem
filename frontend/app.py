@@ -12,13 +12,26 @@ from skimage.color import rgb2gray
 from deskew import determine_skew
 import sys
 from pathlib import Path
+import logging
 sys.path.append(str(Path(__file__).parent))
 from src.infer import process_document, merge_all_results, save_to_json
 from src.imgRotat import check_rotation, deskew
 from src.imgFilter import ImageProcessor
 
+# Настройка логирования
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.StreamHandler(),
+        logging.FileHandler('app.log')
+    ]
+)
+logger = logging.getLogger(__name__)
+
+# Парсинг json
 def parse_annotations(json_data):
-    # Parse the document type
+    # Разбор типа документа
     document_type = json_data.get('document_type', {})
     if isinstance(document_type, str):
         try:
@@ -26,7 +39,7 @@ def parse_annotations(json_data):
         except json.JSONDecodeError:
             document_type = {"document_type": "unknown"}
     
-    # Parse the structured fields
+    # Разбор структурированных полей
     structured_fields = json_data.get('structured_fields', {})
     if isinstance(structured_fields, str):
         try:
@@ -34,7 +47,7 @@ def parse_annotations(json_data):
         except json.JSONDecodeError:
             structured_fields = {}
     
-    # Parse the handwritten text
+    # Разбор рукописного текста (если есть)
     handwritten_text = json_data.get('handwritten_text', {})
     if isinstance(handwritten_text, str):
         try:
@@ -42,7 +55,7 @@ def parse_annotations(json_data):
         except json.JSONDecodeError:
             handwritten_text = {"handwritten_text": []}
     
-    # Parse the signature and seal information
+    # Разбор информации о подписи и печати
     signature_seal = json_data.get('signature_seal', {})
     if isinstance(signature_seal, str):
         try:
@@ -50,7 +63,7 @@ def parse_annotations(json_data):
         except json.JSONDecodeError:
             signature_seal = {"signature_detected": False, "seal_detected": False, "details": []}
     
-    # Combine all the data
+    # Объединение всех данных
     result = {
         'document_type': document_type,
         'structured_fields': structured_fields,
@@ -58,7 +71,7 @@ def parse_annotations(json_data):
         'signature_seal': signature_seal
     }
     
-    print("Parsed annotations:", result)  # Debug print
+    logger.debug("Разобранные аннотации: %s", result)
     return result
 
 # Настройка конфигурации страницы
@@ -90,12 +103,6 @@ st.markdown("""
     }
     </style>
 """, unsafe_allow_html=True)
-
-#rotator
-# def rotate_photo(img):
-#     img = Image.open(img)
-#     img = np.array(img)
-#     return rotator.rotate_image(img)
 
 # Заголовок и шапка
 st.title("Обработка документов")
@@ -129,25 +136,25 @@ if uploaded_file is not None:
     st.image(display_image, caption='Загруженное изображение', use_column_width=True)
     st.markdown("---")
     
-    # Начало отсчета времени
+    # Начало отсчета времени (для расчета времени обработки)
     start_time = time.time()
     
-    # Обработка изображения с помощью ML
+    # Обработка изображения с помощью ML (основная функция)
     with st.spinner('Обработка изображения...'):
         try:
             # Обработка документа с препроцессированным изображением
             result = process_document(processed_image_for_model)
-            print("Process Document Result:", result)  # Отладочная информация
+            logger.info("Результат обработки документа: %s", result)
             
             merged_result = merge_all_results(result)
-            print("MERGED JSON:", merged_result)  # Отладочная информация
+            logger.debug("Объединенный JSON: %s", merged_result)
             
             # Расчет времени обработки
             total_processing_time = time.time() - start_time
             
             # Парсинг данных
             parsed_data = parse_annotations(merged_result)
-            print("Parsed Data:", parsed_data)  # Отладочная информация
+            logger.debug("Разобранные данные: %s", parsed_data)
             
             # Создаем копии изображения для отрисовки
             processed_image = display_image.copy()
@@ -159,22 +166,22 @@ if uploaded_file is not None:
             
             # Получение размеров изображения
             img_width, img_height = display_image.size
-            print(f"Image size: {img_width}x{img_height}")
+            logger.debug("Размер изображения: %dx%d", img_width, img_height)
             
             # Получаем размеры препроцессированного изображения для масштабирования координат
             proc_height, proc_width = processed_image_for_model.shape[:2]
-            print(f"Processed image size: {proc_width}x{proc_height}")
+            logger.debug("Размер обработанного изображения: %dx%d", proc_width, proc_height)
             
             # Отрисовка боксов для рукописного текста
             if 'handwritten_texts' in parsed_data and parsed_data['handwritten_texts']:
-                print(f"Found {len(parsed_data['handwritten_texts'])} handwritten texts")  # Debug print
+                logger.info("Найдено %d рукописных текстов", len(parsed_data['handwritten_texts']))
                 for text_item in parsed_data['handwritten_texts']:
                     try:
                         bbox = text_item.get('bbox', {})
-                        print(f"Processing bbox: {bbox}")  # Отладочная информация
+                        logger.debug("Обработка области: %s", bbox)
                         
                         if not bbox:
-                            print("Skipping item without bbox")
+                            logger.warning("Пропуск элемента без области")
                             continue
                         
                         # Масштабируем координаты из препроцессированного изображения в размеры отображаемого
@@ -189,11 +196,11 @@ if uploaded_file is not None:
                         x_max = max(0, min(x_max, img_width))
                         y_max = max(0, min(y_max, img_height))
                         
-                        print(f"Drawing box at: ({x_min}, {y_min}, {x_max}, {y_max})")  # Отладочная информация
+                        logger.debug("Отрисовка области: (%d, %d, %d, %d)", x_min, y_min, x_max, y_max)
                         
                         # Проверка валидности размеров
                         if x_max <= x_min or y_max <= y_min:
-                            print(f"Skipping invalid bbox: {bbox}")
+                            logger.warning("Пропуск некорректной области: %s", bbox)
                             continue
                             
                         text = text_item.get('text', '')
@@ -239,7 +246,7 @@ if uploaded_file is not None:
                             # Отрисовка текста
                             draw.text((text_x, text_y), text, fill="black", font=font)
                         except Exception as e:
-                            print(f"Error processing text: {str(e)}")
+                            logger.error("Ошибка при обработке текста: %s", str(e))
                             # Если не удалось загрузить Arial, используем дефолтный шрифт
                             font = ImageFont.load_default()
                             text_width = draw.textlength(text, font=font)
@@ -248,7 +255,7 @@ if uploaded_file is not None:
                             draw.text((text_x, text_y), text, fill="black", font=font)
                         
                     except Exception as e:
-                        print(f"Error processing bbox: {str(e)}")
+                        logger.error("Ошибка при обработке области: %s", str(e))
                         continue
 
             # Отрисовка подписи, если она обнаружена
@@ -310,7 +317,7 @@ if uploaded_file is not None:
                 objects_count += len(parsed_data['signature_seal'].get('details', []))
             st.success(f'Обработка завершена! Найдено объектов: {objects_count}')
             
-            # Добавление кнопки переключения
+            # Добавление кнопки переключения между обработанным и не обработанным изображением
             st.subheader("Распознанный рукописный текст")
             show_processed = st.checkbox("Показать обработанное изображение", value=False)
             
@@ -322,12 +329,12 @@ if uploaded_file is not None:
             
             st.header("Результаты обработки")
             
-            # Display JSON in a collapsible expander
+            # Отображение JSON в раскладывающемся блоке
             st.subheader("JSON ответ")
             with st.expander("Нажмите для просмотра JSON"):
                 st.json(parsed_data)
                 
-            # Add download button for JSON
+            # Добавление кнопки для скачивания JSON
             json_str = json.dumps(parsed_data, indent=2)
             st.download_button(
                 label="Скачать JSON",
@@ -336,7 +343,7 @@ if uploaded_file is not None:
                 mime="application/json"
             )
             
-            # Move processing time to the bottom
+            # Перемещаем время обработки вниз
             st.markdown("""
             <div class="processing-time">
                 <h3>Время обработки</h3>
@@ -346,7 +353,7 @@ if uploaded_file is not None:
             
         except Exception as e:
             st.error(f"Произошла ошибка при обработке изображения: {str(e)}")
-            print(f"Error details: {str(e)}")
+            logger.error("Детали ошибки: %s", str(e))
 
 # Подвал
 st.markdown("---")
