@@ -105,10 +105,6 @@
   колаб демка - https://colab.research.google.com/github/ai-forever/sage/blob/main/notebooks/text_correction_demo.ipynb
 
 ## other
-### dataset
-- https://huggingface.co/datasets/ai-forever/school_notebooks_RU - сканы тетрадок [1]
-- https://www.kaggle.com/datasets/constantinwerner/cyrillic-handwriting-dataset/data - классичесский датасет для HTR
-- https://github.com/dbrainio/CyrillicHandwritingPOC - датасет для HTR с использованием синты
 ### статьи
 #### major
 - https://habr.com/ru/companies/sberbank/articles/716796/ - статья Сбера про полный пайплайн задачи. [1]
